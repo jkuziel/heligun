@@ -14,7 +14,7 @@ The terrain is generated using a similar technique found in Comanche where a ray
 #### Controls
 
 |Key|Command|
-|--
+|---|---|
 |w|Pitch forward|
 |s|Pitch back|
 |a|Roll left|

@@ -3,6 +3,7 @@
 *.ko
 *.obj
 *.elf
+*.bc
 
 # Precompiled Headers
 *.gch
@@ -27,6 +28,12 @@
 *.i*86
 *.x86_64
 *.hex
+*.js
+*.html
+
+# Data files
+*.data
+res
 
 # Debug files
 *.dSYM/

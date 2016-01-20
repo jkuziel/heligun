@@ -14,4 +14,5 @@ emcc main.c game.c glext.c renderer.c sdlext.c \
     -s USE_SDL_IMAGE=2 \
     -s SDL2_IMAGE_FORMATS='["png"]' \
     --preload-file res \
+    -O2 \
     -o heligun.html

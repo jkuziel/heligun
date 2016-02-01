@@ -9,8 +9,8 @@ precision mediump float;
 
 //// Uniforms ////
 
-uniform sampler2D u_heightmap;
-uniform sampler2D u_colormap;
+uniform sampler2D u_diffusemap;
+uniform sampler2D u_normalmap;
 
 uniform vec2 u_screensize;
 
@@ -112,12 +112,17 @@ vec3 rotateZ(vec3 v, float t) {
 
 float terrainHeight(vec2 pos) {
 
-    return texture2D(u_heightmap, pos * TERRAIN_SCALE).x * TERRAIN_SCALE;
+    return texture2D(u_diffusemap, pos * TERRAIN_SCALE).w * TERRAIN_SCALE;
 }
 
 vec4 terrainColor(vec2 pos) {
 
-    return texture2D(u_colormap, pos * TERRAIN_SCALE);
+    return vec4(texture2D(u_diffusemap, pos * TERRAIN_SCALE).xyz, 1.0);
+}
+
+vec3 terrainNormal(vec2 pos) {
+
+    return texture2D(u_normalmap, pos * TERRAIN_SCALE).xyz;
 }
 
 vec3 raycastTerrain(vec3 rpos, vec3 rdir) {
@@ -149,16 +154,22 @@ vec4 rayColor(vec3 rpos, vec3 rdir) {
 
     vec4 terrainColor = terrainColor(terrainPos.xy);
 
+    float shadow = 0.0;
+
+    // direct lighting
+    vec3 sunvec = rotateY(vec3(0.0, 0.0, 1.0), u_sunangle);
+
+    vec3 terrainNormal = terrainNormal(terrainPos.xy);
+
+    shadow = 0.0;//1.0 - dot(terrainNormal, sunvec);
+
     // shadow
     if(u_sunangle > 0.2) {
 
-        float shadow = 0.0;
         vec3 occPos = raycastTerrain(terrainPos, vec3(sin(u_sunangle), 0.0, cos(u_sunangle)));
         if(occPos.z > 0.0) {
-            shadow = (1.0 - length(terrainPos - occPos) / MAX_RAY_DIST) * 0.5;
+            shadow += (1.0 - length(terrainPos - occPos) / MAX_RAY_DIST) * 0.5;
         }
-
-        terrainColor = mix(terrainColor, SHADOW_COLOR, shadow);
     }
 
     // fog
@@ -166,6 +177,8 @@ vec4 rayColor(vec3 rpos, vec3 rdir) {
     if(dist > FOG_DIST) {
         fog = map(dist, FOG_DIST, MAX_RAY_DIST, 0.0, 1.0);
     }
+
+    terrainColor = mix(terrainColor, SHADOW_COLOR, shadow);
 
     return mix(terrainColor, skyColor(rdir, u_sunangle), fog);
 }

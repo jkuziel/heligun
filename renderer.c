@@ -77,20 +77,20 @@ int initRenderer() {
 
 
     // Load textures
-    GLuint diffuse_texture = glextLoadTexture("res/diffusemap.png");
-    GLuint heightmap_texture = glextLoadTexture("res/heightmap.png");
+    GLuint diffusemap_texture = glextLoadTexture("res/map0d.png");
+    GLuint normalmap_texture = glextLoadTexture("res/map0n.png");
 
     glextBindTextureToUniform(
           g_shader_program
-        , diffuse_texture
+        , diffusemap_texture
         , 0
-        , "u_colormap"
+        , "u_diffusemap"
     );
     glextBindTextureToUniform(
           g_shader_program
-        , heightmap_texture
+        , normalmap_texture
         , 1
-        , "u_heightmap"
+        , "u_normalmap"
     );
 
     GLint sunangle_loc = glGetUniformLocation(g_shader_program, "u_sunangle");

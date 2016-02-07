@@ -21,6 +21,8 @@ static Helicopter g_player;
 static const float HELI_MAX_THRUST                      = 20.0f;
 static const float HELI_THROTTLE_INTERVAL               = 2.0f;
 
+static const float HELI_LINEAR_ACCEL                    = 10.0f;
+
 static const float HELI_X_ROTATION_MAX                  = 0.5f;
 static const float HELI_Y_ROTATION_MAX                  = 0.3f;
 
@@ -55,17 +57,10 @@ void startGame() {
     g_player.rx3 = 0.0f;
     g_player.ry3 = 0.0f;
     g_player.rz3 = 0.0f;
-    g_player.thrust = 11.0f;
-    g_player.throttle = 0.0f;
 }
 
 
 void updateGame(float time_delta) {
-
-    // Throttle
-    g_player.thrust += g_player.throttle * time_delta;
-    g_player.thrust = CLAMP(g_player.thrust, 0.f, HELI_MAX_THRUST);
-
 
     // Rotational
     g_player.rx2 += g_player.rx3 * time_delta;
@@ -83,14 +78,15 @@ void updateGame(float time_delta) {
     g_player.rx1 = CLAMP(g_player.rx1,-HELI_X_ROTATION_MAX,HELI_X_ROTATION_MAX);
     g_player.ry1 = CLAMP(g_player.ry1,-HELI_Y_ROTATION_MAX,HELI_Y_ROTATION_MAX);
 
-
-    // Thrust acceleration
-    g_player.px3 = sinf(g_player.ry1) * g_player.thrust;
-    g_player.py3 = -sinf(g_player.rx1) * g_player.thrust;
-    g_player.pz3 = cosf(g_player.rx1) * cosf(g_player.ry1) * g_player.thrust;
-
-
     // Linear
+    g_player.px3 =
+          sinf(g_player.rx1) * sinf(g_player.rz1) * HELI_LINEAR_ACCEL
+        + sinf(g_player.ry1) * cosf(g_player.rz1) * HELI_LINEAR_ACCEL;
+    g_player.py3 =
+        - sinf(g_player.rx1) * cosf(g_player.rz1) * HELI_LINEAR_ACCEL
+        + sinf(g_player.ry1) * sinf(g_player.rz1) * HELI_LINEAR_ACCEL;
+    g_player.pz3 = CLAMP(g_player.pz3, -HELI_MAX_THRUST, HELI_MAX_THRUST);
+
     g_player.px2 += g_player.px3 * time_delta;
     g_player.py2 += g_player.py3 * time_delta;
     g_player.pz2 += g_player.pz3 * time_delta;
@@ -103,8 +99,6 @@ void updateGame(float time_delta) {
     g_player.py2 = CLAMP(g_player.py2, -1.0f, 1.0f);
     g_player.pz2 = CLAMP(g_player.pz2, -1.0f, 1.0f);
 
-    g_player.pz2 -= GRAVITY * time_delta;
-
     g_player.px1 += g_player.px2 * time_delta;
     g_player.py1 += g_player.py2 * time_delta;
     g_player.pz1 += g_player.pz2 * time_delta;
@@ -115,7 +109,7 @@ void updateGame(float time_delta) {
 void changePlayerThrottle(int v) {
 
     if(v != 0) {
-        g_player.throttle += (v > 0 ? 1.f:-1.f) * HELI_THROTTLE_INTERVAL;
+        g_player.pz3 += (v > 0 ? 1.f : -1.f) * HELI_THROTTLE_INTERVAL;
     }
 }
 

@@ -19,6 +19,8 @@ static GLuint g_shader_program;
 static GLint g_view_position_loc;
 static GLint g_view_rotation_loc;
 
+static GLint g_sunangle_loc;
+
 
 int initRenderer() {
 
@@ -93,12 +95,11 @@ int initRenderer() {
         , "u_normalmap"
     );
 
-    GLint sunangle_loc = glGetUniformLocation(g_shader_program, "u_sunangle");
-    if(sunangle_loc == -1) {
+    g_sunangle_loc = glGetUniformLocation(g_shader_program, "u_sunangle");
+    if(g_sunangle_loc == -1) {
         printf("Could not find uniform location: u_sunangle\n");
         return 1;
     }
-    glUniform1f(sunangle_loc, 0.0f);
 
     g_view_position_loc = glGetUniformLocation(g_shader_program, "u_viewpos");
     if(g_view_position_loc == -1) {
@@ -137,6 +138,8 @@ void setRendererSize(int width, int height) {
 
 
 void render() {
+
+    glUniform1f(g_sunangle_loc, getSunAngle());
 
     Helicopter player = getPlayer();
 

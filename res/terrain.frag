@@ -112,7 +112,7 @@ vec3 rotateZ(vec3 v, float t) {
 
 float terrainHeight(vec2 pos) {
 
-    return texture2D(u_diffusemap, pos * TERRAIN_SCALE).w * TERRAIN_SCALE;
+    return texture2D(u_diffusemap, pos * TERRAIN_SCALE).w;
 }
 
 vec4 terrainColor(vec2 pos) {
@@ -122,7 +122,9 @@ vec4 terrainColor(vec2 pos) {
 
 vec3 terrainNormal(vec2 pos) {
 
-    return texture2D(u_normalmap, pos * TERRAIN_SCALE).xyz;
+    vec3 normal = texture2D(u_normalmap, pos * TERRAIN_SCALE).xyz;
+
+    return vec3(normal.x * 2.0 - 1.0, normal.y * 2.0 - 1.0, normal.z);
 }
 
 vec3 raycastTerrain(vec3 rpos, vec3 rdir) {
@@ -161,7 +163,7 @@ vec4 rayColor(vec3 rpos, vec3 rdir) {
 
     vec3 terrainNormal = terrainNormal(terrainPos.xy);
 
-    shadow = 0.0;//1.0 - dot(terrainNormal, sunvec);
+    shadow = 1.0 - dot(terrainNormal, sunvec);
 
     // shadow
     if(u_sunangle > 0.2) {
@@ -178,7 +180,7 @@ vec4 rayColor(vec3 rpos, vec3 rdir) {
         fog = map(dist, FOG_DIST, MAX_RAY_DIST, 0.0, 1.0);
     }
 
-    terrainColor = mix(terrainColor, SHADOW_COLOR, shadow);
+    terrainColor = mix(terrainColor, SHADOW_COLOR, shadow * 0.8);
 
     return mix(terrainColor, skyColor(rdir, u_sunangle), fog);
 }

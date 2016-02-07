@@ -15,6 +15,8 @@
 
 static Helicopter g_player;
 
+float g_sunAngle;
+
 
 // Constants
 
@@ -41,7 +43,7 @@ void startGame() {
 
     g_player.px1 = 0.0f;
     g_player.py1 = 0.0f;
-    g_player.pz1 = 0.5f;
+    g_player.pz1 = 1.2f;
     g_player.px2 = 0.0f;
     g_player.py2 = 0.0f;
     g_player.pz2 = 0.0f;
@@ -57,6 +59,8 @@ void startGame() {
     g_player.rx3 = 0.0f;
     g_player.ry3 = 0.0f;
     g_player.rz3 = 0.0f;
+
+    g_sunAngle = 0.0f;
 }
 
 
@@ -103,6 +107,7 @@ void updateGame(float time_delta) {
     g_player.py1 += g_player.py2 * time_delta;
     g_player.pz1 += g_player.pz2 * time_delta;
 
+    g_sunAngle = wrap(g_sunAngle + 0.2f * time_delta, 0.0f, 6.28318);
 }
 
 
@@ -147,4 +152,10 @@ void firePlayerMissle() {
 Helicopter getPlayer() {
 
     return g_player;
+}
+
+
+float getSunAngle() {
+
+    return g_sunAngle;
 }

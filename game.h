@@ -60,3 +60,6 @@ void firePlayerMissle();
 
 
 Helicopter getPlayer();
+
+
+float getSunAngle();

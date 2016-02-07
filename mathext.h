@@ -15,4 +15,12 @@
 
 #define CLAMP(x, a, b) (MIN(MAX(x, a), b))
 
+inline float wrap(float x, float min, float max) {
+    x = fmod(x + max, (max - min));
+    if (x < 0) {
+        x += (max - min);
+    }
+    return x + min;
+}
+
 #define RADIANS_TO_DEGREES(x) x * 57.295f

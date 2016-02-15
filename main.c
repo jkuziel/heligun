@@ -20,8 +20,8 @@
 
 
 // Defines
-#define DEFAULT_WINDOW_WIDTH    800
-#define DEFAULT_WINDOW_HEIGHT   600
+#define DEFAULT_WINDOW_WIDTH    854
+#define DEFAULT_WINDOW_HEIGHT   480
 
 
 // Globals

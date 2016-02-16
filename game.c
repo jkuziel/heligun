@@ -19,22 +19,26 @@ float g_sunAngle;
 
 
 // Constants
+static const float HELI_X_LINEAR_WRAP                   = 4.0f;
+static const float HELI_Y_LINEAR_WRAP                   = 4.0f;
+static const float HELI_Z_LINEAR_MAX                    = 1.2f;
 
-static const float HELI_MAX_THRUST                      = 20.0f;
-static const float HELI_THROTTLE_INTERVAL               = 2.0f;
+static const float HELI_LINEAR_DAMPING                  = 0.05f;
 
-static const float HELI_LINEAR_ACCEL                    = 10.0f;
+static const float HELI_X_LINEAR_ACCEL                  = 4.0f;
+static const float HELI_Y_LINEAR_ACCEL                  = 3.0f;
+static const float HELI_Z_LINEAR_ACCEL                  = 2.0f;
 
-static const float HELI_X_ROTATION_MAX                  = 0.5f;
-static const float HELI_Y_ROTATION_MAX                  = 0.3f;
+static const float HELI_X_ROTATION_MAX                  = 0.7f;
+static const float HELI_Y_ROTATION_MAX                  = 0.7f;
 
-// Helicopter rotational acceleration
-static const float HELI_ROT_ACCEL                       = 5.0f;
+static const float HELI_ROTATIONAL_DAMPING              = 0.05f;
 
-static const float HELI_LINEAR_DAMPING                  = 0.2f;
-static const float HELI_ROTATIONAL_DAMPING              = 0.2f;
+static const float HELI_X_ROTATIONAL_ACCEL              = 5.0f;
+static const float HELI_Y_ROTATIONAL_ACCEL              = 4.0f;
+static const float HELI_Z_ROTATIONAL_ACCEL              = 6.0f;
 
-static const float GRAVITY                              = 9.8f;
+static const float SUN_ROTATIONAL_SPEED                 = 0.02f;
 
 
 // Public Functions
@@ -81,15 +85,15 @@ void updateGame(float time_delta) {
 
     g_player.rx1 = CLAMP(g_player.rx1,-HELI_X_ROTATION_MAX,HELI_X_ROTATION_MAX);
     g_player.ry1 = CLAMP(g_player.ry1,-HELI_Y_ROTATION_MAX,HELI_Y_ROTATION_MAX);
+    g_player.rz1 = wrap(g_player.rz1, 0.0f, M_PI_2X);
 
     // Linear
     g_player.px3 =
-          sinf(g_player.rx1) * sinf(g_player.rz1) * HELI_LINEAR_ACCEL
-        + sinf(g_player.ry1) * cosf(g_player.rz1) * HELI_LINEAR_ACCEL;
+          sinf(g_player.rx1) * sinf(g_player.rz1) * HELI_Y_LINEAR_ACCEL
+        + sinf(g_player.ry1) * cosf(g_player.rz1) * HELI_X_LINEAR_ACCEL;
     g_player.py3 =
-        - sinf(g_player.rx1) * cosf(g_player.rz1) * HELI_LINEAR_ACCEL
-        + sinf(g_player.ry1) * sinf(g_player.rz1) * HELI_LINEAR_ACCEL;
-    g_player.pz3 = CLAMP(g_player.pz3, -HELI_MAX_THRUST, HELI_MAX_THRUST);
+        - sinf(g_player.rx1) * cosf(g_player.rz1) * HELI_Y_LINEAR_ACCEL
+        + sinf(g_player.ry1) * sinf(g_player.rz1) * HELI_X_LINEAR_ACCEL;
 
     g_player.px2 += g_player.px3 * time_delta;
     g_player.py2 += g_player.py3 * time_delta;
@@ -99,22 +103,22 @@ void updateGame(float time_delta) {
     g_player.py2 -= g_player.py2 * HELI_LINEAR_DAMPING;
     g_player.pz2 -= g_player.pz2 * HELI_LINEAR_DAMPING;
 
-    g_player.px2 = CLAMP(g_player.px2, -1.0f, 1.0f);
-    g_player.py2 = CLAMP(g_player.py2, -1.0f, 1.0f);
-    g_player.pz2 = CLAMP(g_player.pz2, -1.0f, 1.0f);
-
     g_player.px1 += g_player.px2 * time_delta;
     g_player.py1 += g_player.py2 * time_delta;
     g_player.pz1 += g_player.pz2 * time_delta;
 
-    g_sunAngle = wrap(g_sunAngle + 0.2f * time_delta, 0.0f, 6.28318);
+    g_player.px1 = wrap(g_player.px1, 0.0f, HELI_X_LINEAR_WRAP);
+    g_player.py1 = wrap(g_player.py1, 0.0f, HELI_Y_LINEAR_WRAP);
+    g_player.pz1 = CLAMP(g_player.pz1, 0.0f, HELI_Z_LINEAR_MAX);
+
+    g_sunAngle = wrap(g_sunAngle+SUN_ROTATIONAL_SPEED*time_delta, 0.0f,M_PI_2X);
 }
 
 
 void changePlayerThrottle(int v) {
 
     if(v != 0) {
-        g_player.pz3 += (v > 0 ? 1.f : -1.f) * HELI_THROTTLE_INTERVAL;
+        g_player.pz3 += (v > 0 ? 1.f : -1.f) * HELI_Z_LINEAR_ACCEL;
     }
 }
 
@@ -122,15 +126,15 @@ void changePlayerThrottle(int v) {
 void rotatePlayer(int x, int y, int z) {
 
     if(x != 0) {
-        g_player.rx3 += (x > 0 ? 1.f:-1.f) * HELI_ROT_ACCEL;
+        g_player.rx3 += (x > 0 ? 1.f:-1.f) * HELI_X_ROTATIONAL_ACCEL;
     }
 
     if(y != 0) {
-        g_player.ry3 += (y > 0 ? 1.f:-1.f) * HELI_ROT_ACCEL;
+        g_player.ry3 += (y > 0 ? 1.f:-1.f) * HELI_Y_ROTATIONAL_ACCEL;
     }
 
     if(z != 0) {
-        g_player.rz3 += (z > 0 ? 1.f:-1.f) * HELI_ROT_ACCEL;
+        g_player.rz3 += (z > 0 ? 1.f:-1.f) * HELI_Z_ROTATIONAL_ACCEL;
     }
 }
 

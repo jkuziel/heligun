@@ -33,9 +33,6 @@ typedef struct {
     float ry3;
     float rz3;
 
-    float thrust;
-    float throttle;
-
 } Helicopter;
 
 

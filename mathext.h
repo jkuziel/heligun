@@ -9,6 +9,9 @@
 #include <math.h>
 
 
+#define M_PI_2X                 6.28318530717959
+
+
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
@@ -23,4 +26,4 @@ inline float wrap(float x, float min, float max) {
     return x + min;
 }
 
-#define RADIANS_TO_DEGREES(x) x * 57.295f
+#define RADIANS_TO_DEGREES(x)   x * 57.295f

@@ -309,3 +309,31 @@ int glextBindTextureToUniform(
 
     return 0;
 }
+
+
+GLuint glextCreateVBO(
+      GLfloat* vertices
+    , GLuint count
+    , GLint size
+    , GLenum usage
+) {
+
+    GLuint geom_buffer = 0;
+    glGenBuffers(1, &geom_buffer);
+    if(geom_buffer == 0) {
+        printf("Could not create geometry buffer\n");
+        return 0;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, geom_buffer);
+    glBufferData(
+          GL_ARRAY_BUFFER
+        , sizeof(GLfloat) * count * size
+        , vertices
+        , usage
+    );
+
+    glVertexAttribPointer(0, size, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    return geom_buffer;
+}

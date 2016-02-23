@@ -14,12 +14,14 @@
 #include <stdio.h>
 
 
-static GLuint g_shader_program;
+static GLuint g_terrain_shader;
 
 static GLint g_view_position_loc;
 static GLint g_view_rotation_loc;
 
 static GLint g_sunangle_loc;
+
+static GLuint g_terrain_vbo;
 
 
 int initRenderer() {
@@ -36,46 +38,30 @@ int initRenderer() {
 
 
     // Create OpenGL shader program
-    g_shader_program = glextCreateShaderProgram(
+    g_terrain_shader = glextCreateShaderProgram(
           "res/terrain.vert"
         , "res/terrain.frag"
     );
-    if(g_shader_program == 0) {
+    if(g_terrain_shader == 0) {
         printf("Could not create shader program\n");
         return 1;
     }
 
-    glUseProgram(g_shader_program);
-    glBindAttribLocation(g_shader_program, 0, "a_position");
-
     // Geometry
-    GLuint geom_buffer = 0;
-    glGenBuffers(1, &geom_buffer);
-    if(geom_buffer == 0) {
-        printf("Could not create geometry buffer\n");
-        return 1;
-    }
+    glBindAttribLocation(g_terrain_shader, 0, "a_position");
+    glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, geom_buffer);
-
-    GLfloat vertex_data[] = {
+    GLfloat terrain_vertex_data[] = {
         -1.f, 1.0f,
         1.0f, 1.0f,
         -1.f, -1.f,
         1.0f, -1.f,
     };
 
-    glBufferData(
-          GL_ARRAY_BUFFER
-        , sizeof(GLfloat) * 8
-        , vertex_data
-        , GL_STATIC_DRAW
-    );
-
-    glBindBuffer(GL_ARRAY_BUFFER, geom_buffer);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-
-    glEnableVertexAttribArray(0);
+    g_terrain_vbo = glextCreateVBO(terrain_vertex_data, 4, 2, GL_STATIC_DRAW);
+    if(g_terrain_vbo == 0) {
+        return 1;
+    }
 
 
     // Load textures
@@ -83,31 +69,31 @@ int initRenderer() {
     GLuint normalmap_texture = glextLoadTexture("res/map0n.png");
 
     glextBindTextureToUniform(
-          g_shader_program
+          g_terrain_shader
         , diffusemap_texture
         , 0
         , "u_diffusemap"
     );
     glextBindTextureToUniform(
-          g_shader_program
+          g_terrain_shader
         , normalmap_texture
         , 1
         , "u_normalmap"
     );
 
-    g_sunangle_loc = glGetUniformLocation(g_shader_program, "u_sunangle");
+    g_sunangle_loc = glGetUniformLocation(g_terrain_shader, "u_sunangle");
     if(g_sunangle_loc == -1) {
         printf("Could not find uniform location: u_sunangle\n");
         return 1;
     }
 
-    g_view_position_loc = glGetUniformLocation(g_shader_program, "u_viewpos");
+    g_view_position_loc = glGetUniformLocation(g_terrain_shader, "u_viewpos");
     if(g_view_position_loc == -1) {
         printf("Could not find uniform location: u_viewpos\n");
         return 1;
     }
 
-    g_view_rotation_loc = glGetUniformLocation(g_shader_program, "u_viewrot");
+    g_view_rotation_loc = glGetUniformLocation(g_terrain_shader, "u_viewrot");
     if(g_view_rotation_loc == -1) {
         printf("Could not find uniform location: u_viewrot\n");
         return 1;
@@ -122,11 +108,11 @@ void setRendererSize(int width, int height) {
 
     glViewport(0, 0, width, height);
 
-    glUseProgram(g_shader_program);
+    glUseProgram(g_terrain_shader);
 
     GLint screensize_loc =
     glGetUniformLocation(
-        g_shader_program
+        g_terrain_shader
         , "u_screensize"
     );
     if(screensize_loc != -1) {
@@ -139,6 +125,8 @@ void setRendererSize(int width, int height) {
 
 void render() {
 
+    glUseProgram(g_terrain_shader);
+
     glUniform1f(g_sunangle_loc, getSunAngle());
 
     Helicopter player = getPlayer();
@@ -148,6 +136,8 @@ void render() {
 
     float view_rotation_vec[] = { player.rx1, player.ry1, player.rz1 };
     glUniform3fv(g_view_rotation_loc, 1, view_rotation_vec);
+
+    glBindBuffer(GL_ARRAY_BUFFER, g_terrain_vbo);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }

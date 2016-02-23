@@ -91,3 +91,16 @@ int glextBindTextureToUniform(
     , GLuint unit
     , const char* uniform
 );
+
+
+/// @brief Create a Vertex Buffer Object from an array of data
+/// @param vertices Pointer to flat vertex array
+/// @param count Number of vertices described by the vertex array
+/// @param size Number of floats per vertex
+/// @param usage Type of VBO: GL_STREAM_DRAW, GL_STATIC_DRAW, or GL_DYNAMIC_DRAW
+GLuint glextCreateVBO(
+      GLfloat* vertices
+    , GLuint count
+    , GLint size
+    , GLenum usage
+);

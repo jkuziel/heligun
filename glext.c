@@ -304,9 +304,6 @@ int glextBindTextureToUniform(
 
     glUniform1i(uniform_loc, unit);
 
-    glActiveTexture(GL_TEXTURE0 + unit);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
     return 0;
 }
 

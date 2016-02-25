@@ -242,6 +242,8 @@ GLuint glextCreateShaderProgram(
 
 GLuint glextLoadTexture(
       const char* filename
+    , GLuint repeat
+    , GLuint linearFilter
 ) {
     if(filename == NULL) {
         printf("Texture filename not specified\n");
@@ -259,11 +261,15 @@ GLuint glextLoadTexture(
 
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    GLint filterParam = (linearFilter == 0 ? GL_NEAREST : GL_LINEAR);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterParam);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterParam);
+
+    GLint repeatParam = (repeat == 0 ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeatParam);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeatParam);
 
     GLenum pixel_format = GL_RGBA;
     GLenum pixel_type = GL_UNSIGNED_BYTE;

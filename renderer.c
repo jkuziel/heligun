@@ -83,9 +83,9 @@ int initRenderer() {
     }
 
     // Load textures
-    g_terrain_diffuse_texture = glextLoadTexture("res/map0d.png");
-    g_terrain_normal_texture = glextLoadTexture("res/map0n.png");
-    g_cockpit_diffuse_texture = glextLoadTexture("res/helicockpit.png");
+    g_terrain_diffuse_texture = glextLoadTexture("res/map0d.png", 1, 0);
+    g_terrain_normal_texture = glextLoadTexture("res/map0n.png", 1, 0);
+    g_cockpit_diffuse_texture = glextLoadTexture("res/helicockpit.png", 0, 1);
     if(g_cockpit_diffuse_texture == 0) {
         return 1;
     }

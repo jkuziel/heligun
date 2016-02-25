@@ -71,10 +71,14 @@ GLuint glextCreateShaderProgram(
 
 /// @brief Creates and loads texture from image file
 /// @param filename Filename of image to load
+/// @param repeat 0 = clamp texture, otherwise repeat
+/// @param linearFilter 0 = nearest filtering, otherwise linear filtering
 /// @return GL name of texture
 
 GLuint glextLoadTexture(
       const char* filename
+    , GLuint repeat
+    , GLuint linearFilter
 );
 
 

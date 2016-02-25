@@ -21,8 +21,9 @@ static GLuint g_cockpit_diffuse_texture;
 static GLuint g_terrain_shader;
 static GLuint g_cockpit_shader;
 
-static GLint g_view_position_loc;
-static GLint g_view_rotation_loc;
+static GLint g_terrain_position_loc;
+static GLint g_terrain_rotation_loc;
+static GLint g_cockpit_offset_loc;
 
 static GLint g_sunangle_loc;
 
@@ -118,15 +119,21 @@ int initRenderer() {
         return 1;
     }
 
-    g_view_position_loc = glGetUniformLocation(g_terrain_shader, "u_viewpos");
-    if(g_view_position_loc == -1) {
+    g_terrain_position_loc = glGetUniformLocation(g_terrain_shader,"u_viewpos");
+    if(g_terrain_position_loc == -1) {
         printf("Could not find uniform location: u_viewpos\n");
         return 1;
     }
 
-    g_view_rotation_loc = glGetUniformLocation(g_terrain_shader, "u_viewrot");
-    if(g_view_rotation_loc == -1) {
+    g_terrain_rotation_loc = glGetUniformLocation(g_terrain_shader,"u_viewrot");
+    if(g_terrain_rotation_loc == -1) {
         printf("Could not find uniform location: u_viewrot\n");
+        return 1;
+    }
+
+    g_cockpit_offset_loc = glGetUniformLocation(g_cockpit_shader, "u_offset");
+    if(g_cockpit_offset_loc == -1) {
+        printf("Could not find uniform location: u_offset");
         return 1;
     }
 
@@ -157,7 +164,7 @@ void render() {
 
     glEnableVertexAttribArray(0);
 
-    // Render terrain
+    // Render terrain //////////////////
     glUseProgram(g_terrain_shader);
 
     glActiveTexture(GL_TEXTURE0);
@@ -170,18 +177,21 @@ void render() {
 
     Helicopter player = getPlayer();
 
-    float view_position_vec[] = { player.px1, player.py1, player.pz1 };
-    glUniform3fv(g_view_position_loc, 1, view_position_vec);
+    float terrain_position_vec[] = { player.px1, player.py1, player.pz1 };
+    glUniform3fv(g_terrain_position_loc, 1, terrain_position_vec);
 
-    float view_rotation_vec[] = { player.rx1, player.ry1, player.rz1 };
-    glUniform3fv(g_view_rotation_loc, 1, view_rotation_vec);
+    float terrain_rotation_vec[] = { player.rx1, player.ry1, player.rz1 };
+    glUniform3fv(g_terrain_rotation_loc, 1, terrain_rotation_vec);
 
     glBindBuffer(GL_ARRAY_BUFFER, g_terrain_vbo);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    // Render cockpit
+    // Render cockpit //////////////////
     glUseProgram(g_cockpit_shader);
+
+    float cockpit_offset_vec[] = { -player.rz2 * 0.05f, -player.rx2 * 0.05f };
+    glUniform2fv(g_cockpit_offset_loc, 1, cockpit_offset_vec);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, g_cockpit_diffuse_texture);

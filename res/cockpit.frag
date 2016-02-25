@@ -10,12 +10,14 @@ precision mediump float;
 // Uniforms
 uniform sampler2D u_diffusemap;
 
+uniform vec2 u_offset;
+
 
 void main() {
 
     vec2 texcoord = vec2(
-           gl_PointCoord.x * 0.5 + 0.5
-        , -gl_PointCoord.y * 0.5 + 0.5
+           gl_PointCoord.x * 0.45 + 0.5 + clamp(u_offset.x, -0.05, 0.05)
+        , -gl_PointCoord.y * 0.45 + 0.5 + clamp(u_offset.y, -0.05, 0.05)
     );
 
     gl_FragColor = texture2D(u_diffusemap, texcoord);

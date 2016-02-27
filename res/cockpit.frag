@@ -11,14 +11,25 @@ precision mediump float;
 uniform sampler2D u_diffusemap;
 
 uniform vec2 u_offset;
+uniform float u_rotation;
 
 
+// Main
 void main() {
 
-    vec2 texcoord = vec2(
-           gl_PointCoord.x * 0.45 + 0.5 + clamp(u_offset.x, -0.05, 0.05)
-        , -gl_PointCoord.y * 0.45 + 0.5 + clamp(u_offset.y, -0.05, 0.05)
+    vec2 pos = vec2(
+           gl_PointCoord.x + clamp(u_offset.x, -0.05, 0.05)
+        , -gl_PointCoord.y + clamp(u_offset.y, -0.05, 0.05)
     );
 
-    gl_FragColor = texture2D(u_diffusemap, texcoord);
+    float c = cos(u_rotation);
+    float s = sin(u_rotation);
+
+    vec2 rot = vec2(pos.x * c - pos.y * s , pos.x * s + pos.y * c);
+
+    vec2 scale = rot * 0.95;
+
+    vec2 uv = scale * 0.5 + 0.5;
+
+    gl_FragColor = texture2D(u_diffusemap, uv);
 }

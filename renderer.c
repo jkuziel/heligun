@@ -154,15 +154,28 @@ void setRendererSize(int width, int height) {
 
     glUseProgram(g_terrain_shader);
 
-    GLint screensize_loc =
+    GLint terrain_screensize_loc =
     glGetUniformLocation(
         g_terrain_shader
         , "u_screensize"
     );
-    if(screensize_loc != -1) {
-        glUniform2f(screensize_loc, (float)width, (float)height);
+    if(terrain_screensize_loc != -1) {
+        glUniform2f(terrain_screensize_loc, (float)width, (float)height);
     } else {
-        printf("Could not find uniform location: u_screensize\n");
+        printf("Could not find uniform location: terrain_screensize_loc\n");
+    }
+
+    glUseProgram(g_cockpit_shader);
+
+    GLint cockpit_screensize_loc =
+    glGetUniformLocation(
+          g_cockpit_shader
+        , "u_screensize"
+    );
+    if(cockpit_screensize_loc != -1) {
+        glUniform2f(cockpit_screensize_loc, (float)width, (float)height);
+    } else {
+        printf("Could not find uniform location: cockpit_screensize_loc\n");
     }
 }
 

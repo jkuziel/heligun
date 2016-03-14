@@ -26,4 +26,7 @@ inline float wrap(float x, float min, float max) {
     return x + min;
 }
 
+#define SCALE(x, x1, x2, y1, y2) \
+    ((y1) + ((x) - (x1)) * ((y2) - (y1)) / ((x2) - (x1)))
+
 #define RADIANS_TO_DEGREES(x)   x * 57.295f

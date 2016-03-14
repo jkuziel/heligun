@@ -29,6 +29,9 @@ static const float HELI_X_LINEAR_ACCEL                  = 4.0f;
 static const float HELI_Y_LINEAR_ACCEL                  = 3.0f;
 static const float HELI_Z_LINEAR_ACCEL                  = 2.0f;
 
+static const float HELI_X_ROTATION_DAMPING              = 0.5f;
+static const float HELI_Y_ROTATION_DAMPING              = 0.5f;
+
 static const float HELI_X_ROTATION_MAX                  = 0.7f;
 static const float HELI_Y_ROTATION_MAX                  = 0.7f;
 
@@ -82,6 +85,30 @@ void updateGame(float time_delta) {
     g_player.rx1 += g_player.rx2 * time_delta;
     g_player.ry1 += g_player.ry2 * time_delta;
     g_player.rz1 += g_player.rz2 * time_delta;
+
+    if(fabs(g_player.rx1) > HELI_X_ROTATION_DAMPING
+    && (g_player.rx1 * g_player.rx2) > 0.0f) {
+        g_player.rx1 -=
+        SCALE(
+              fabs(g_player.rx1)
+            , HELI_X_ROTATION_DAMPING
+            , HELI_X_ROTATION_MAX
+            , 0.0f
+            , g_player.rx2
+        ) * time_delta;
+    }
+
+    if(fabs(g_player.ry1) > HELI_Y_ROTATION_DAMPING
+    && (g_player.ry1 * g_player.ry2) > 0.0f) {
+        g_player.ry1 -=
+        SCALE(
+              fabs(g_player.ry1)
+            , HELI_Y_ROTATION_DAMPING
+            , HELI_Y_ROTATION_MAX
+            , 0.0f
+            , g_player.ry2
+        ) * time_delta;
+    }
 
     g_player.rx1 = CLAMP(g_player.rx1,-HELI_X_ROTATION_MAX,HELI_X_ROTATION_MAX);
     g_player.ry1 = CLAMP(g_player.ry1,-HELI_Y_ROTATION_MAX,HELI_Y_ROTATION_MAX);

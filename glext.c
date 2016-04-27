@@ -146,7 +146,7 @@ GLuint glextLoadShader(
     }
 
 #ifdef __EMSCRIPTEN__
-    GLchar* shader_lines[] = { "precision mediump float;" shader_src };
+    GLchar* shader_lines[] = { "precision mediump float;", shader_src };
     glShaderSource(shader, 2, (const GLchar**)shader_lines, NULL);
 #else
     GLchar* shader_lines[] = { shader_src };

@@ -7,8 +7,6 @@
 # This software is MIT licensed.
 #
 
-set -e
-
 emcc main.c game.c glext.c renderer.c sdlext.c \
     -s USE_SDL=2 \
     -s USE_SDL_IMAGE=2 \

@@ -5,7 +5,6 @@
 // This software is MIT licensed.
 //
 
-precision mediump float;
 
 //// Uniforms ////
 

@@ -5,7 +5,11 @@
 // This software is MIT licensed.
 //
 
+#ifdef __EMSCRIPTEN__
 #include <SDL2/SDL_opengles2.h>
+#else
+#include <SDL2/SDL_opengl.h>
+#endif
 
 /// @brief Print text description of OpenGL error from glGetError().
 /// @return GL error enum. 0 if no error, !0 if error occurred

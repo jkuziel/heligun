@@ -160,9 +160,11 @@ void setRendererSize(int width, int height) {
         , "u_screensize"
     );
     if(terrain_screensize_loc != -1) {
-        glUniform2f(terrain_screensize_loc, (float)width, (float)height);
+        float renderSize[] = {(float)width, (float)height};
+        glUniform2fv(terrain_screensize_loc, 1, renderSize);
+        glextCheckError();
     } else {
-        printf("Could not find uniform location: terrain_screensize_loc\n");
+        printf("Could not find uniform location: u_screensize\n");
     }
 
     glUseProgram(g_cockpit_shader);
@@ -173,9 +175,11 @@ void setRendererSize(int width, int height) {
         , "u_screensize"
     );
     if(cockpit_screensize_loc != -1) {
-        glUniform2f(cockpit_screensize_loc, (float)width, (float)height);
+        float renderSize[] = {(float)width, (float)height};
+        glUniform2fv(cockpit_screensize_loc, 1, renderSize);
+        glextCheckError();
     } else {
-        printf("Could not find uniform location: cockpit_screensize_loc\n");
+        printf("Could not find uniform location: u_screensize\n");
     }
 }
 
@@ -193,7 +197,8 @@ void render() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, g_terrain_normal_texture);
 
-    glUniform1f(g_sunangle_loc, getSunAngle());
+    float sunAngle[] = { getSunAngle() };
+    glUniform1fv(g_sunangle_loc, 1, sunAngle);
 
     Helicopter player = getPlayer();
 
@@ -213,7 +218,8 @@ void render() {
     float cockpit_offset_vec[] = { -player.rz2 * 0.05f, -player.rx2 * 0.05f };
     glUniform2fv(g_cockpit_offset_loc, 1, cockpit_offset_vec);
 
-    glUniform1f(g_cockpit_rotation_loc, -player.ry2 * 0.05f);
+    float cockpit_rotation[] = { -player.ry2 * 0.05f };
+    glUniform1fv(g_cockpit_rotation_loc, 1, cockpit_rotation);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, g_cockpit_diffuse_texture);

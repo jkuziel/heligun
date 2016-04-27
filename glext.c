@@ -145,9 +145,14 @@ GLuint glextLoadShader(
         return 0;
     }
 
+#ifdef __EMSCRIPTEN__
+    GLchar* shader_lines[] = { "precision mediump float;" shader_src };
+    glShaderSource(shader, 2, (const GLchar**)shader_lines, NULL);
+#else
     GLchar* shader_lines[] = { shader_src };
-
     glShaderSource(shader, 1, (const GLchar**)shader_lines, NULL);
+#endif
+
 
     free(shader_src);
 
@@ -302,6 +307,8 @@ int glextBindTextureToUniform(
     , const char* uniform
 ) {
 
+    glUseProgram(program);
+
     GLint uniform_loc = glGetUniformLocation(program, uniform);
     if(uniform_loc == -1) {
         printf("Could not find uniform location: %s\n", uniform);
@@ -309,8 +316,7 @@ int glextBindTextureToUniform(
     }
 
     glUniform1i(uniform_loc, unit);
-
-    return 0;
+    return glextCheckError();
 }
 
 

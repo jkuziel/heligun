@@ -5,8 +5,6 @@
 // This software is MIT licensed.
 //
 
-precision mediump float;
-
 
 // Uniforms
 uniform sampler2D u_diffusemap;

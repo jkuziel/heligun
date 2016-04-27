@@ -112,7 +112,7 @@ void updateGame(float time_delta) {
 
     g_player.rx1 = CLAMP(g_player.rx1,-HELI_X_ROTATION_MAX,HELI_X_ROTATION_MAX);
     g_player.ry1 = CLAMP(g_player.ry1,-HELI_Y_ROTATION_MAX,HELI_Y_ROTATION_MAX);
-    g_player.rz1 = wrap(g_player.rz1, 0.0f, M_PI_2X);
+    g_player.rz1 = WRAPF(g_player.rz1, 0.0f, M_PI_2X);
 
     // Linear
     g_player.px3 =
@@ -134,11 +134,11 @@ void updateGame(float time_delta) {
     g_player.py1 += g_player.py2 * time_delta;
     g_player.pz1 += g_player.pz2 * time_delta;
 
-    g_player.px1 = wrap(g_player.px1, 0.0f, HELI_X_LINEAR_WRAP);
-    g_player.py1 = wrap(g_player.py1, 0.0f, HELI_Y_LINEAR_WRAP);
+    g_player.px1 = WRAPF(g_player.px1, 0.0f, HELI_X_LINEAR_WRAP);
+    g_player.py1 = WRAPF(g_player.py1, 0.0f, HELI_Y_LINEAR_WRAP);
     g_player.pz1 = CLAMP(g_player.pz1, 0.0f, HELI_Z_LINEAR_MAX);
 
-    g_sunAngle = wrap(g_sunAngle+SUN_ROTATIONAL_SPEED*time_delta, 0.0f,M_PI_2X);
+    g_sunAngle =WRAPF(g_sunAngle+SUN_ROTATIONAL_SPEED*time_delta, 0.0f,M_PI_2X);
 }
 
 

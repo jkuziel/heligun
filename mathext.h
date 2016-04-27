@@ -9,7 +9,7 @@
 #include <math.h>
 
 
-#define M_PI_2X                 6.28318530717959
+#define M_PI_2X                 6.28318530717959f
 
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
@@ -25,6 +25,8 @@ inline float wrap(float x, float min, float max) {
     }
     return x + min;
 }
+
+#define WRAPF(x, min, max) (fmod((x) + (max), ((max) - (min))) + (min))
 
 #define SCALE(x, x1, x2, y1, y2) \
     ((y1) + ((x) - (x1)) * ((y2) - (y1)) / ((x2) - (x1)))

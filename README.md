@@ -58,8 +58,8 @@ See *LICENSE* for more information
 #### Building
 
 * Emscripten
-    * Add Emscripten SDK to your PATH (Run `./<emscripten sdk>/emsdk_set_env.sh`)
+    * Add Emscripten SDK to your PATH (Bash: `source ./<emscripten sdk>/emsdk_env.sh`)
     * Run `./build_emscripten.sh`
-    * *heligun.html*, *heligun.data*, *heligun.js* should be generated
+    * *index.html*, *index.html.mem*, *index.data*, *index.js* should be generated
     * Run `python -m SimpleHTTPServer 8080` from heligun directory
-    * Open `http://localhost:8080/heligun.html` in your web browser
+    * Open `http://localhost:8080` in your web browser

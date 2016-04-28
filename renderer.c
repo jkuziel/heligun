@@ -25,6 +25,7 @@ static GLint g_terrain_position_loc;
 static GLint g_terrain_rotation_loc;
 static GLint g_cockpit_offset_loc;
 static GLint g_cockpit_rotation_loc;
+static GLint g_cockpit_brightness_loc;
 
 static GLint g_sunangle_loc;
 
@@ -144,6 +145,13 @@ int initRenderer() {
         return 1;
     }
 
+    g_cockpit_brightness_loc
+        = glGetUniformLocation(g_cockpit_shader,"u_brightness");
+    if(g_cockpit_brightness_loc == -1) {
+        printf("Could not find uniform location: u_brightness\n");
+        return 1;
+    }
+
     return 0;
 }
 
@@ -220,6 +228,11 @@ void render() {
 
     float cockpit_rotation[] = { -player.ry2 * 0.05f };
     glUniform1fv(g_cockpit_rotation_loc, 1, cockpit_rotation);
+
+    float cockpit_brightness[] = {
+        SCALE(sin(player.rz1) * cos(getSunAngle()), -1.0f, 1.0f, 0.6f, 1.0f)
+    };
+    glUniform1fv(g_cockpit_brightness_loc, 1, cockpit_brightness);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, g_cockpit_diffuse_texture);

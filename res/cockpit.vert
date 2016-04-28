@@ -37,7 +37,7 @@ void main() {
         aspect = vec2(u_screensize.x / u_screensize.y, 1.0);
     }
 
-    vec2 scale = rot * 1.05 * aspect;
+    vec2 scale = rot * 1.1 * aspect;
 
     v_textureCoord = vec2(
           a_position.x * 0.5 + 0.5

@@ -1,7 +1,7 @@
 # heligun
 *3D helicopter shooter with raytraced terrain for Emscripten*
 
-Copyright (c) 2016 Joseph Kuziel
+Copyright (c) 2018 Joseph Kuziel
 
 
 #### Description

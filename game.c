@@ -1,6 +1,6 @@
 //
 // heligun: 3D flight sim shooter
-// Copyright (c) 2016 Joseph Kuziel
+// Copyright (c) 2018 Joseph Kuziel
 //
 // This software is MIT licensed.
 //
@@ -9,12 +9,16 @@
 #include "game.h"
 #include "mathext.h"
 #include <stdio.h>
+#include <string.h>
 
+#define BULLET_COUNT 50
 
 // Globals
 
 static Helicopter g_player;
+static Bullet g_bullet_projectiles[BULLET_COUNT];
 
+int g_bullets;
 float g_sunAngle;
 
 
@@ -43,6 +47,8 @@ static const float HELI_Z_ROTATIONAL_ACCEL              = 6.0f;
 
 static const float SUN_ROTATIONAL_SPEED                 = 0.02f;
 
+static const int BULLET_DAMAGE                          = 5;
+static const float BULLET_VELOCITY[3]                   = {0, -.05, .05};
 
 // Public Functions
 
@@ -68,6 +74,15 @@ void startGame() {
     g_player.rz3 = 0.0f;
 
     g_sunAngle = 0.0f;
+    g_bullets = 0;
+
+    for(int i = 0; i < BULLET_COUNT; i++) {
+       float empty_array[3] = { 0.0, 0.0, 0.0 };
+       memcpy(g_bullet_projectiles[i].position, empty_array, sizeof(g_bullet_projectiles[i].position) );
+       memcpy(g_bullet_projectiles[i].velocity, empty_array, sizeof(g_bullet_projectiles[i].velocity) );
+       g_bullet_projectiles[i].active = false;
+       g_bullet_projectiles[i].damage = BULLET_DAMAGE;
+    }
 }
 
 
@@ -139,6 +154,7 @@ void updateGame(float time_delta) {
     g_player.pz1 = CLAMP(g_player.pz1, 0.0f, HELI_Z_LINEAR_MAX);
 
     g_sunAngle =WRAPF(g_sunAngle+SUN_ROTATIONAL_SPEED*time_delta, 0.0f,M_PI_2X);
+    // TODO: Add rendering of g_bullet_projectiles here
 }
 
 
@@ -170,6 +186,7 @@ void firePlayerBullets(int v) {
 
     if(v > 0) {
         printf("fire bullets\n");
+        addProjectile(-1);
     }
 }
 
@@ -179,6 +196,17 @@ void firePlayerMissle() {
     printf("fire missile\n");
 }
 
+void addProjectile(int type) {
+    if(type == -1) {  // TODO: Replace these ugly ints with an enum
+        if(g_bullets < BULLET_COUNT) {
+           g_bullets++;
+        } else {
+           g_bullets = 0;
+        }
+       g_bullet_projectiles[g_bullets].active = true;
+       memcpy(g_bullet_projectiles[g_bullets].velocity, BULLET_VELOCITY, sizeof(g_bullet_projectiles[g_bullets].velocity) );
+    }
+}
 
 Helicopter getPlayer() {
 

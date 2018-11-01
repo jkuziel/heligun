@@ -1,12 +1,13 @@
 //
 // heligun: 3D flight sim shooter
-// Copyright (c) 2016 Joseph Kuziel
+// Copyright (c) 2018 Joseph Kuziel
 //
 // This software is MIT licensed.
 //
 
 
 // Structures
+#include <stdbool.h>
 
 typedef struct {
 
@@ -36,6 +37,12 @@ typedef struct {
 
 } Helicopter;
 
+typedef struct {
+    float position[3];
+    float velocity[3];
+    bool active;
+    int damage;
+} Bullet;
 
 // Functions
 
@@ -55,6 +62,9 @@ void firePlayerBullets(int v);
 
 
 void firePlayerMissle();
+
+
+void addProjectile();
 
 
 Helicopter getPlayer();
